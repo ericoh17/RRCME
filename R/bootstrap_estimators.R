@@ -76,7 +76,11 @@ RunRakingBootstrap <- function(all_dat, inds, dat_valid, mod_rake, sampling_type
   dat_sim <- all_dat[inds,]
   valid_dat <- dat_sim %>% filter(randomized == TRUE)
 
-  raking_boot_mod <- FitRakingModel(valid_dat, dat_sim, mod_rake, sampling_type)
+  if (sampling_type == "cc") {
+    raking_boot_mod <- FitRakingModel_CC(valid_dat, dat_sim, mod_rake, sampling_type)
+  } else if (sampling_type == "srs") {
+    raking_boot_mod <- FitRakingModel(valid_dat, dat_sim, mod_rake, sampling_type)
+  }
 
   return(c(raking_boot_mod[[1]], raking_boot_mod[[3]]))
 
