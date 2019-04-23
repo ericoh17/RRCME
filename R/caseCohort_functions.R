@@ -23,7 +23,7 @@ FitRakingModel_CC <- function(valid_dat, dat_sim, mod) {
 
   inf_func <- GetInfluenceFcn(valid_dat, dat_sim, mod)
 
-  dat_IF <- ind_cols(dat_sim, inf_func)
+  dat_IF <- bind_cols(dat_sim, inf_func)
 
   phase2_calibration <- CalibrateDesign_CC(dat_IF)
 
