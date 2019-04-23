@@ -37,17 +37,12 @@
 #'
 #' @rdname bootstrap_estimators
 #' @export
-RunRCBootstrap <- function(all_dat, inds, dat_valid) {
+RunRCBootstrap <- function(all_dat, inds, dat_valid, sampling_type) {
 
   dat_sim <- all_dat[inds,]
+  valid_dat <- dat_sim %>% dplyr::filter(randomized == TRUE)
 
-  dat_sim_valid <- dat_sim %>% dplyr::filter(randomized == TRUE)
-
-  dat_valid_dt <- as.data.table(dat_valid)
-  setkey(dat_valid_dt, "id")
-  valid_dat <- dat_valid_dt[CJ(c(dat_sim_valid$id)), allow.cartesian = TRUE]
-
-  rc_boot_mod <- FitRCModel(valid_dat, dat_sim, TRUE)
+  rc_boot_mod <- FitRCModel(valid_dat, dat_sim, sampling_type, TRUE)
 
   return(c(rc_boot_mod[[1]], rc_boot_mod[[3]]))
 
@@ -56,17 +51,14 @@ RunRCBootstrap <- function(all_dat, inds, dat_valid) {
 
 #' @rdname bootstrap_estimators
 #' @export
-RunRSRCBootstrap <- function(all_dat, inds, dat_valid, beta_x_start, beta_z_start) {
+RunRSRCBootstrap <- function(all_dat, inds, dat_valid, sampling_type,
+                             beta_x_start, beta_z_start) {
 
   dat_sim <- all_dat[inds,]
+  valid_dat <- dat_sim %>% dplyr::filter(randomized == TRUE)
 
-  dat_sim_valid <- dat_sim %>% dplyr::filter(randomized == TRUE)
-
-  dat_valid_dt <- as.data.table(dat_valid)
-  setkey(dat_valid_dt, "id")
-  valid_dat <- dat_valid_dt[CJ(c(dat_sim_valid$id)), allow.cartesian = TRUE]
-
-  RSRC_boot_mod <- FitRSRCModel(valid_dat, dat_sim, beta_x_start, beta_z_start)
+  RSRC_boot_mod <- FitRSRCModel(valid_dat, dat_sim, sampling_type,
+                                beta_x_start, beta_z_start)
 
   return(c(RSRC_boot_mod[[1]], RSRC_boot_mod[[2]]))
 
@@ -78,22 +70,9 @@ RunRSRCBootstrap <- function(all_dat, inds, dat_valid, beta_x_start, beta_z_star
 RunRakingBootstrap <- function(all_dat, inds, dat_valid, mod_rake, sampling_type) {
 
   dat_sim <- all_dat[inds,]
+  valid_dat <- dat_sim %>% dplyr::filter(randomized == TRUE)
 
-  dat_sim_valid <- dat_sim %>% dplyr::filter(randomized == TRUE)
-
-  dat_valid_dt <- as.data.table(dat_valid)
-  setkey(dat_valid_dt, "id")
-  valid_dat <- dat_valid_dt[CJ(c(dat_sim_valid$id)), allow.cartesian = TRUE]
-
-  if (sampling_type == "srs") {
-
-    raking_boot_mod <- FitRakingModel(valid_dat, dat_sim, mod_rake)
-
-  } else if (sampling_type == "cc") {
-
-    raking_boot_mod <- FitRakingModel_CC(valid_dat, dat_sim, mod_rake)
-
-  }
+  raking_boot_mod <- FitRakingModel(valid_dat, dat_sim, mod_rake, sampling_type)
 
   return(c(raking_boot_mod[[1]], raking_boot_mod[[3]]))
 
@@ -105,12 +84,7 @@ RunRakingBootstrap <- function(all_dat, inds, dat_valid, mod_rake, sampling_type
 RunCompleteCaseBootstrap <- function(all_dat, inds, dat_valid, sampling_type) {
 
   dat_sim <- all_dat[inds,]
-
-  dat_sim_valid <- dat_sim %>% dplyr::filter(randomized == TRUE)
-
-  dat_valid_dt <- as.data.table(dat_valid)
-  setkey(dat_valid_dt, "id")
-  valid_dat <- dat_valid_dt[CJ(c(dat_sim_valid$id)), allow.cartesian = TRUE]
+  valid_dat <- dat_sim %>% dplyr::filter(randomized == TRUE)
 
   if (sampling_type == "srs") {
 
@@ -134,7 +108,7 @@ RunNaiveBootstrap <- function(all_dat, inds) {
 
   dat_sim <- all_dat[inds,]
 
-  naive_boot_mod <- FitCoxModel(dat_sim$time_star, vccc_dat$delta_star, vccc_dat$x_star, vccc_dat$z)
+  naive_boot_mod <- FitCoxModel(dat_sim$time_star, dat_sim$delta_star, dat_sim$x_star, dat_sim$z)
 
   return(c(coef(naive_boot_mod)[1], coef(naive_boot_mod)[2]))
 
