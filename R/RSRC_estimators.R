@@ -25,8 +25,11 @@
 #' @export
 FitRSRCModel <- function(valid_dat, dat_sim, sampling_type, beta_x_start, beta_z_start) {
 
+  dat_sim$time_hatXY <- dat_sim$time_star - CalcExpw(valid_dat, dat_sim, sampling_type)
+  valid_dat$time_hatXY <- dat_sim$time_hatXY[dat_sim$randomized == TRUE]
+
   if (sampling_type == "cc") {
-    valid.dat <- valid.dat %>%
+    valid_dat <- valid_dat %>%
       dplyr::mutate(wts = 1/twophase(id = list(~id, ~id),
                                      subset = ~randomized,
                                      strata = list(NULL, ~delta.star),

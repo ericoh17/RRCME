@@ -34,7 +34,7 @@
 FitRCModel <- function(valid_dat, dat_sim, sampling_type, return_coef = FALSE) {
 
   if (sampling_type == "cc") {
-    valid.dat <- valid.dat %>%
+    valid_dat <- valid_dat %>%
       dplyr::mutate(wts = 1/twophase(id = list(~id, ~id),
                                      subset = ~randomized,
                                      strata = list(NULL, ~delta.star),
@@ -71,7 +71,8 @@ FitCoxModel <- function(cox_time, cox_delta, cox_x, cox_z, return_coef = FALSE) 
 }
 
 
-
+#' @rdname RC_estimators
+#' @export
 CalcExpX <- function(valid_dat, dat_sim, sampling_type) {
 
   if (sampling_type == "cc") {
@@ -85,7 +86,8 @@ CalcExpX <- function(valid_dat, dat_sim, sampling_type) {
 }
 
 
-
+#' @rdname RC_estimators
+#' @export
 CalcExpw <- function(valid_dat, dat_sim, sampling_type) {
 
   if (sampling_type == "cc") {
