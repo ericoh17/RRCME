@@ -23,16 +23,27 @@
 #'
 #' @param dat_sim Full dataset
 #'
+#' @param sampling_type String indicating either simple random
+#' sampling or case-cohort sampling
+#'
 #' @return Eiher a list of Cox model coefficients
 #' and standard errors of a Cox model fit object
 #'
 #' @rdname RC_estimators
 #' @export
-FitRCModel <- function(valid_dat, dat_sim, return_coef = FALSE) {
+FitRCModel <- function(valid_dat, dat_sim, sampling_type, return_coef = FALSE) {
 
-  x_hat <- CalcExpX(valid_dat, dat_sim)
+  if (sampling_type == "cc") {
+    valid.dat <- valid.dat %>%
+      dplyr::mutate(wts = 1/twophase(id = list(~id, ~id),
+                                     subset = ~randomized,
+                                     strata = list(NULL, ~delta.star),
+                                     data = dat_sim)$prob)
+  }
 
-  w_hat <- CalcExpw(valid_dat, dat_sim)
+  x_hat <- CalcExpX(valid_dat, dat_sim, sampling_type)
+
+  w_hat <- CalcExpw(valid_dat, dat_sim, sampling_type)
   time_hat <- dat_sim$time_star - w_hat
 
   rc_mod <- FitCoxModel(time_hat, dat_sim$delta_star, x_hat, dat_sim$z)
@@ -61,18 +72,28 @@ FitCoxModel <- function(cox_time, cox_delta, cox_x, cox_z, return_coef = FALSE) 
 
 
 
-CalcExpX <- function(valid_dat, dat_sim) {
+CalcExpX <- function(valid_dat, dat_sim, sampling_type) {
 
-  x_mod <- lm(x ~ x_star + z, data = valid_dat)
+  if (sampling_type == "cc") {
+    x_mod <- lm(x ~ x_star + z, data = valid_dat, weights = wts)
+  } else if (sampling_type == "srs") {
+    x_mod <- lm(x ~ x_star + z, data = valid_dat)
+  }
+
   x_predict <- predict(x_mod, newdata = dat_sim)
 
 }
 
 
 
-CalcExpw <- function(valid_dat, dat_sim) {
+CalcExpw <- function(valid_dat, dat_sim, sampling_type) {
 
-  w_mod <- lm(total_y_err ~ x_star + z, data = valid_dat)
+  if (sampling_type == "cc") {
+    w_mod <- lm(total_y_err ~ x_star + z, data = valid_dat, weights = wts)
+  } else if (sampling_type == "srs") {
+    w_mod <- lm(total_y_err ~ x_star + z, data = valid_dat)
+  }
+
   w_predict <- predict(w_mod, newdata = dat_sim)
 
 }

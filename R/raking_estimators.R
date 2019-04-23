@@ -12,13 +12,16 @@
 #' @param mod String indicating which model to get influence
 #' functions from
 #'
+#' @param sampling_type String indicating either simple random
+#' sampling or case-cohort sampling
+#'
 #' @return Raking model fit object
 #'
 #' @rdname raking_estimators
 #' @export
-FitRakingModel <- function(valid_dat, dat_sim, mod) {
+FitRakingModel <- function(valid_dat, dat_sim, mod, sampling_type) {
 
-  inf_func <- GetInfluenceFcn(valid_dat, dat_sim, mod)
+  inf_func <- GetInfluenceFcn(valid_dat, dat_sim, mod, sampling_type)
 
   dat_IF <- dplyr::bind_cols(dat_sim, inf_func)
 
@@ -30,10 +33,10 @@ FitRakingModel <- function(valid_dat, dat_sim, mod) {
 
 
 
-GetInfluenceFcn <- function(valid_dat, dat_sim, mod) {
+GetInfluenceFcn <- function(valid_dat, dat_sim, mod, sampling_type) {
 
   if (mod == "RC") {
-    inf_func_mod <- FitRCModel(valid_dat, dat_sim)  # fit RC model
+    inf_func_mod <- FitRCModel(valid_dat, dat_sim, sampling_type)  # fit RC model
   } else if (mod == "naive") {
     inf_func_mod <- FitCoxModel(dat_sim$time_star, dat_sim$delta_star, dat_sim$x_star, dat_sim$z)
   } else {
