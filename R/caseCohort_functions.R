@@ -19,9 +19,9 @@
 #'
 #' @rdname caseCohort_functions
 #' @export
-FitRakingModel_CC <- function(valid_dat, dat_sim, mod) {
+FitRakingModel_CC <- function(valid_dat, dat_sim, mod, sampling_type) {
 
-  inf_func <- GetInfluenceFcn(valid_dat, dat_sim, mod)
+  inf_func <- GetInfluenceFcn(valid_dat, dat_sim, mod, sampling_type)
 
   dat_IF <- bind_cols(dat_sim, inf_func)
 
