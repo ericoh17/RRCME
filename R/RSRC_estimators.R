@@ -12,6 +12,9 @@
 #'
 #' @param dat_sim Full dataset
 #'
+#' @param sampling_type String indicating either simple random
+#' sampling or case-cohort sampling
+#'
 #' @param beta_x_start Initial guess for beta_x in optimization
 #'
 #' @param beta_x_start Initial guess for beta_z in optimization
@@ -20,10 +23,18 @@
 #'
 #' @rdname RSRC_estimators
 #' @export
-FitRSRCModel <- function(valid_dat, dat_sim, beta_x_start, beta_z_start) {
+FitRSRCModel <- function(valid_dat, dat_sim, sampling_type, beta_x_start, beta_z_start) {
+
+  if (sampling_type == "cc") {
+    valid.dat <- valid.dat %>%
+      dplyr::mutate(wts = 1/twophase(id = list(~id, ~id),
+                                     subset = ~randomized,
+                                     strata = list(NULL, ~delta.star),
+                                     data = dat_sim)$prob)
+  }
 
   # Recalibrate error-prone covariate and failure time
-  RSRC_mats <- CalcRSRCXYhat(valid_dat, dat_sim)
+  RSRC_mats <- CalcRSRCXYhat(valid_dat, dat_sim, sampling_type)
 
   # Get event times for all subjects
   which_fail <- which(dat_sim$delta_star == 1)
@@ -73,7 +84,7 @@ FitRSRCModel <- function(valid_dat, dat_sim, beta_x_start, beta_z_start) {
 
 
 
-CalcRSRCXYhat <- function(valid_dat, dat_sim) {
+CalcRSRCXYhat <- function(valid_dat, dat_sim, sampling_type) {
 
   num_fail <- sum(dat_sim$delta_star)
 
@@ -93,8 +104,8 @@ CalcRSRCXYhat <- function(valid_dat, dat_sim) {
   x_hat_mat <- time_hat_mat <- matrix(NA, nrow = dim(dat_sim)[1], ncol = length(RSRC_times) + 1)
 
   # first column is standard RC using all data
-  x_hat_mat[, 1] <- CalcExpX(valid_dat, dat_sim)
-  time_hat_mat[, 1] <- dat_sim$time_hatXY - CalcExpw_RSRC(valid_dat, dat_sim)
+  x_hat_mat[, 1] <- CalcExpX(valid_dat, dat_sim, sampling_type)
+  time_hat_mat[, 1] <- dat_sim$time_hatXY - CalcExpw_RSRC(valid_dat, dat_sim, sampling_type)
 
 
   for(RSRC_ind in 1:length(RSRC_times)) {
@@ -107,10 +118,11 @@ CalcRSRCXYhat <- function(valid_dat, dat_sim) {
     if (sum(curr_risk_set) >= 20) {
 
       x_hat_mat[curr_risk_set, RSRC_ind + 1] <- CalcExpX(valid_dat[valid_risk_set,],
-                                                        dat_sim[curr_risk_set,])
+                                                        dat_sim[curr_risk_set,],
+                                                        sampling_type)
 
       time_hat_mat[curr_risk_set, RSRC_ind + 1] <- dat_sim[curr_risk_set,"time_hatXY"] -
-        CalcExpw_RSRC(valid_dat[valid_risk_set,], dat_sim[curr_risk_set,])
+        CalcExpw_RSRC(valid_dat[valid_risk_set,], dat_sim[curr_risk_set,], sampling_type)
 
     } else {
       x_hat_mat[curr_risk_set, RSRC_ind + 1] <- x_hat_mat[curr_risk_set, RSRC_ind]
@@ -142,12 +154,17 @@ RSRCscore <- function(betas, xhat_mat, xhat_subj, z_mat, z_subj,
 
 
 
-CalcExpw_RSRC <- function(valid_dat, dat_sim) {
+CalcExpw_RSRC <- function(valid_dat, dat_sim, sampling_type) {
 
   valid_dat <- valid_dat %>%
     dplyr::mutate(new_total_y_err = time_hatXY - time)
 
-  w_mod <- lm(new_total_y_err ~ x_star + z, data = valid_dat)
+  if (sampling_type == "cc") {
+    w_mod <- lm(new_total_y_err ~ x_star + z, data = valid_dat, weights = wts)
+  } else if (sampling_type == "srs") {
+    w_mod <- lm(new_total_y_err ~ x_star + z, data = valid_dat)
+  }
+
   w_predict <- predict(w_mod, newdata = dat_sim)
 
 }
