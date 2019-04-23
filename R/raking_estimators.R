@@ -29,7 +29,7 @@ FitRakingModel <- function(valid_dat, dat_sim, mod, sampling_type) {
 
   dat_IF <- bind_cols(dat_sim, inf_func)
 
-  phase2_calibration <- CalibrateDesign(dat_IF)
+  phase2_calibration <- CalibrateDesign(dat_IF, sampling_type)
 
   raking_fit <- FitCalibrationModel(phase2_calibration)
 
