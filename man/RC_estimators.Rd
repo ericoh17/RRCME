@@ -2,14 +2,23 @@
 % Please edit documentation in R/RC_estimators.R
 \name{FitRCModel}
 \alias{FitRCModel}
+\alias{CalcExpX}
+\alias{CalcExpw}
 \title{Calculates regression calibration estimates}
 \usage{
-FitRCModel(valid_dat, dat_sim, return_coef = FALSE)
+FitRCModel(valid_dat, dat_sim, sampling_type, return_coef = FALSE)
+
+CalcExpX(valid_dat, dat_sim, sampling_type)
+
+CalcExpw(valid_dat, dat_sim, sampling_type)
 }
 \arguments{
 \item{valid_dat}{Validation subset}
 
 \item{dat_sim}{Full dataset}
+
+\item{sampling_type}{String indicating either simple random
+sampling or case-cohort sampling}
 
 \item{return_coef}{Boolean indicating whether
 to return a list of coefficients}

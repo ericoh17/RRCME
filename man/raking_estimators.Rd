@@ -4,7 +4,7 @@
 \alias{FitRakingModel}
 \title{Calculates raking estimates}
 \usage{
-FitRakingModel(valid_dat, dat_sim, mod)
+FitRakingModel(valid_dat, dat_sim, mod, sampling_type)
 }
 \arguments{
 \item{valid_dat}{Validation subset dataset}
@@ -13,6 +13,9 @@ FitRakingModel(valid_dat, dat_sim, mod)
 
 \item{mod}{String indicating which model to get influence
 functions from}
+
+\item{sampling_type}{String indicating either simple random
+sampling or case-cohort sampling}
 }
 \value{
 Raking model fit object
