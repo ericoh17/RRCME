@@ -32,7 +32,7 @@ FitRSRCModel <- function(valid_dat, dat_sim, sampling_type, beta_x_start, beta_z
     valid_dat <- valid_dat %>%
       dplyr::mutate(wts = 1/twophase(id = list(~id, ~id),
                                      subset = ~randomized,
-                                     strata = list(NULL, ~delta.star),
+                                     strata = list(NULL, ~delta_star),
                                      data = dat_sim)$prob)
   }
 
