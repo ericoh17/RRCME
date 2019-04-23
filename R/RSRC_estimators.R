@@ -25,9 +25,6 @@
 #' @export
 FitRSRCModel <- function(valid_dat, dat_sim, sampling_type, beta_x_start, beta_z_start) {
 
-  dat_sim$time_hatXY <- dat_sim$time_star - CalcExpw(valid_dat, dat_sim, sampling_type)
-  valid_dat$time_hatXY <- dat_sim$time_hatXY[dat_sim$randomized == TRUE]
-
   if (sampling_type == "cc") {
     valid_dat <- valid_dat %>%
       dplyr::mutate(wts = 1/twophase(id = list(~id, ~id),
@@ -35,6 +32,9 @@ FitRSRCModel <- function(valid_dat, dat_sim, sampling_type, beta_x_start, beta_z
                                      strata = list(NULL, ~delta_star),
                                      data = dat_sim)$prob)
   }
+
+  dat_sim$time_hatXY <- dat_sim$time_star - CalcExpw(valid_dat, dat_sim, sampling_type)
+  valid_dat$time_hatXY <- dat_sim$time_hatXY[dat_sim$randomized == TRUE]
 
   # Recalibrate error-prone covariate and failure time
   RSRC_mats <- CalcRSRCXYhat(valid_dat, dat_sim, sampling_type)
