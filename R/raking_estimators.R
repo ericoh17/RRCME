@@ -17,13 +17,17 @@
 #'
 #' @return Raking model fit object
 #'
+#' @importFrom dplyr bind_cols
+#'
+#' @importFrom survey twophase calibrate svycoxph
+#'
 #' @rdname raking_estimators
 #' @export
 FitRakingModel <- function(valid_dat, dat_sim, mod, sampling_type) {
 
   inf_func <- GetInfluenceFcn(valid_dat, dat_sim, mod, sampling_type)
 
-  dat_IF <- dplyr::bind_cols(dat_sim, inf_func)
+  dat_IF <- bind_cols(dat_sim, inf_func)
 
   phase2_calibration <- CalibrateDesign(dat_IF)
 

@@ -29,16 +29,22 @@
 #' @return Eiher a list of Cox model coefficients
 #' and standard errors of a Cox model fit object
 #'
+#' @importFrom dplyr mutate
+#'
+#' @importFrom survival coxph
+#'
+#' @importFrom survey twophase
+#'
 #' @rdname RC_estimators
 #' @export
 FitRCModel <- function(valid_dat, dat_sim, sampling_type, return_coef = FALSE) {
 
   if (sampling_type == "cc") {
     valid_dat <- valid_dat %>%
-      dplyr::mutate(wts = 1/twophase(id = list(~id, ~id),
-                                     subset = ~randomized,
-                                     strata = list(NULL, ~delta_star),
-                                     data = dat_sim)$prob)
+      mutate(wts = 1/twophase(id = list(~id, ~id),
+                              subset = ~randomized,
+                              strata = list(NULL, ~delta_star),
+                              data = dat_sim)$prob)
   }
 
   x_hat <- CalcExpX(valid_dat, dat_sim, sampling_type)

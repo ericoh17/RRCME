@@ -12,13 +12,18 @@
 #' functions from
 #'
 #' @return Raking model fit object
+#'
+#' @importFrom dplyr bind_cols
+#'
+#' @importFrom survey twophase calibrate
+#'
 #' @rdname caseCohort_functions
 #' @export
 FitRakingModel_CC <- function(valid_dat, dat_sim, mod) {
 
   inf_func <- GetInfluenceFcn(valid_dat, dat_sim, mod)
 
-  dat_IF <- dplyr::bind_cols(dat_sim, inf_func)
+  dat_IF <- ind_cols(dat_sim, inf_func)
 
   phase2_calibration <- CalibrateDesign_CC(dat_IF)
 

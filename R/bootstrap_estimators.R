@@ -35,12 +35,16 @@
 #'
 #' @return A vector of bootstrap beta_x and beta_z estimates
 #'
+#' @importFrom dplyr filter
+#'
+#' @importFrom survey twophase svycoxph
+#'
 #' @rdname bootstrap_estimators
 #' @export
 RunRCBootstrap <- function(all_dat, inds, dat_valid, sampling_type) {
 
   dat_sim <- all_dat[inds,]
-  valid_dat <- dat_sim %>% dplyr::filter(randomized == TRUE)
+  valid_dat <- dat_sim %>% filter(randomized == TRUE)
 
   rc_boot_mod <- FitRCModel(valid_dat, dat_sim, sampling_type, TRUE)
 
@@ -55,7 +59,7 @@ RunRSRCBootstrap <- function(all_dat, inds, dat_valid, sampling_type,
                              beta_x_start, beta_z_start) {
 
   dat_sim <- all_dat[inds,]
-  valid_dat <- dat_sim %>% dplyr::filter(randomized == TRUE)
+  valid_dat <- dat_sim %>% filter(randomized == TRUE)
 
   RSRC_boot_mod <- FitRSRCModel(valid_dat, dat_sim, sampling_type,
                                 beta_x_start, beta_z_start)
@@ -70,7 +74,7 @@ RunRSRCBootstrap <- function(all_dat, inds, dat_valid, sampling_type,
 RunRakingBootstrap <- function(all_dat, inds, dat_valid, mod_rake, sampling_type) {
 
   dat_sim <- all_dat[inds,]
-  valid_dat <- dat_sim %>% dplyr::filter(randomized == TRUE)
+  valid_dat <- dat_sim %>% filter(randomized == TRUE)
 
   raking_boot_mod <- FitRakingModel(valid_dat, dat_sim, mod_rake, sampling_type)
 
@@ -84,7 +88,7 @@ RunRakingBootstrap <- function(all_dat, inds, dat_valid, mod_rake, sampling_type
 RunCompleteCaseBootstrap <- function(all_dat, inds, dat_valid, sampling_type) {
 
   dat_sim <- all_dat[inds,]
-  valid_dat <- dat_sim %>% dplyr::filter(randomized == TRUE)
+  valid_dat <- dat_sim %>% filter(randomized == TRUE)
 
   if (sampling_type == "srs") {
 

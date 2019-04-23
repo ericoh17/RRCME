@@ -21,16 +21,20 @@
 #'
 #' @return List of RSRC beta_x and beta_z estimates
 #'
+#' @importFrom rootSolve multiroot
+#'
+#' @importFrom dplyr mutate filter select arrange
+#'
 #' @rdname RSRC_estimators
 #' @export
 FitRSRCModel <- function(valid_dat, dat_sim, sampling_type, beta_x_start, beta_z_start) {
 
   if (sampling_type == "cc") {
     valid_dat <- valid_dat %>%
-      dplyr::mutate(wts = 1/twophase(id = list(~id, ~id),
-                                     subset = ~randomized,
-                                     strata = list(NULL, ~delta_star),
-                                     data = dat_sim)$prob)
+      mutate(wts = 1/twophase(id = list(~id, ~id),
+                              subset = ~randomized,
+                              strata = list(NULL, ~delta_star),
+                              data = dat_sim)$prob)
   }
 
   dat_sim$time_hatXY <- dat_sim$time_star - CalcExpw(valid_dat, dat_sim, sampling_type)
@@ -93,9 +97,9 @@ CalcRSRCXYhat <- function(valid_dat, dat_sim, sampling_type) {
 
   # sort distinct failure times
   ordered_obs_time <- dat_sim %>%
-    dplyr::filter(delta_star == 1) %>%
-    dplyr::select(time_hatXY) %>%
-    dplyr::arrange(time_hatXY)
+    filter(delta_star == 1) %>%
+    select(time_hatXY) %>%
+    arrange(time_hatXY)
 
   # get step sizes for RC by deciles (can change)
   num_recalibrate <- 10
