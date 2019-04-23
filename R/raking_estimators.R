@@ -56,11 +56,20 @@ GetInfluenceFcn <- function(valid_dat, dat_sim, mod, sampling_type) {
 
 
 
-CalibrateDesign <- function(IF_dat) {
+CalibrateDesign <- function(IF_dat, sampling_type) {
 
-  IF_design <- twophase(id = list(~id, ~id), subset = ~randomized, data = IF_dat)
+  if (sampling_type == "cc") {
 
-  IF_raking <- calibrate(IF_design, phase = 2, formula = ~if1+if2, calfun = "raking")
+    IF_design <- twophase(id = list(~id, ~id), subset = ~randomized,
+                          strata = list(NULL, ~delta_star), data = IF_dat)
+    IF_raking <- calibrate(IF_design, phase = 2, formula = ~if1+if2+delta_star, calfun = "raking")
+
+  } else if (sampling_type == "srs") {
+
+    IF_design <- twophase(id = list(~id, ~id), subset = ~randomized, data = IF_dat)
+    IF_raking <- calibrate(IF_design, phase = 2, formula = ~if1+if2, calfun = "raking")
+
+  }
 
 }
 
