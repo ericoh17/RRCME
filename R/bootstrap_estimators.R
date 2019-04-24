@@ -41,7 +41,7 @@
 #'
 #' @rdname bootstrap_estimators
 #' @export
-RunRCBootstrap <- function(all_dat, inds, dat_valid, sampling_type) {
+RunRCBootstrap <- function(all_dat, inds, sampling_type) {
 
   dat_sim <- all_dat[inds,]
   valid_dat <- dat_sim %>% filter(randomized == TRUE)
@@ -55,7 +55,7 @@ RunRCBootstrap <- function(all_dat, inds, dat_valid, sampling_type) {
 
 #' @rdname bootstrap_estimators
 #' @export
-RunRSRCBootstrap <- function(all_dat, inds, dat_valid, sampling_type,
+RunRSRCBootstrap <- function(all_dat, inds, sampling_type,
                              beta_x_start, beta_z_start) {
 
   dat_sim <- all_dat[inds,]
@@ -71,13 +71,13 @@ RunRSRCBootstrap <- function(all_dat, inds, dat_valid, sampling_type,
 
 #' @rdname bootstrap_estimators
 #' @export
-RunRakingBootstrap <- function(all_dat, inds, dat_valid, mod_rake, sampling_type) {
+RunRakingBootstrap <- function(all_dat, inds, mod_rake, sampling_type) {
 
   dat_sim <- all_dat[inds,]
   valid_dat <- dat_sim %>% filter(randomized == TRUE)
 
   if (sampling_type == "cc") {
-    raking_boot_mod <- FitRakingModel_CC(valid_dat, dat_sim, mod_rake, sampling_type)
+    raking_boot_mod <- FitRakingModel(valid_dat, dat_sim, mod_rake, sampling_type)
   } else if (sampling_type == "srs") {
     raking_boot_mod <- FitRakingModel(valid_dat, dat_sim, mod_rake, sampling_type)
   }
@@ -89,7 +89,7 @@ RunRakingBootstrap <- function(all_dat, inds, dat_valid, mod_rake, sampling_type
 
 #' @rdname bootstrap_estimators
 #' @export
-RunCompleteCaseBootstrap <- function(all_dat, inds, dat_valid, sampling_type) {
+RunCompleteCaseBootstrap <- function(all_dat, inds, sampling_type) {
 
   dat_sim <- all_dat[inds,]
   valid_dat <- dat_sim %>% filter(randomized == TRUE)
