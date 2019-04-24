@@ -46,8 +46,11 @@ vccc_dat$x[vccc_dat$randomized == TRUE] <- valid_subset$x
 ```
 
 Set the sampling scheme for the validation subset:
+('srs' for simple random sampling and
+'cc' for case-cohort sampling)
 ```R
 sampling_scheme <- "srs"
+#sampling_scheme <- "cc"
 ```
 
 ## Running RC
