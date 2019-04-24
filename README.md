@@ -30,7 +30,7 @@ In this example, we will read in a simulated dataset and
 corresponding validation subset. 
 
 ```R
-vccc_dat <- read.csv("example_vccc_dat.csv", row.names = 1)
+full_dat <- read.csv("example_full_dat.csv", row.names = 1)
 valid_subset <- read.csv("example_valid_subset.csv", row.names = 1)
 ```
 
@@ -38,11 +38,11 @@ The raking estimators require that the full dataset contains the true
 variables for subjects that are in the validation subset.
 
 ```R
-vccc_dat$time <- vccc_dat$delta <- vccc_dat$x <- NA
+full_dat$time <- full_dat$delta <- full_dat$x <- NA
 
-vccc_dat$time[vccc_dat$randomized == TRUE] <- valid_subset$time
-vccc_dat$delta[vccc_dat$randomized == TRUE] <- valid_subset$delta
-vccc_dat$x[vccc_dat$randomized == TRUE] <- valid_subset$x
+full_dat$time[full_dat$randomized == TRUE] <- valid_subset$time
+full_dat$delta[full_dat$randomized == TRUE] <- valid_subset$delta
+full_dat$x[full_dat$randomized == TRUE] <- valid_subset$x
 ```
 
 Set the sampling scheme for the validation subset:
@@ -56,21 +56,21 @@ sampling_scheme <- "srs"
 ## Running RC
 
 ```R
-RC_fit <- FitRCModel(valid_subset, vccc_dat, sampling_scheme)
+RC_fit <- FitRCModel(valid_subset, full_dat, sampling_scheme)
 
-RC_boot <- boot(vccc_dat, RunRCBootstrap, 
-                strata = factor(vccc_dat$randomized), R = num_boot,
+RC_boot <- boot(full_dat, RunRCBootstrap, 
+                strata = factor(full_dat$randomized), R = num_boot,
                 dat_valid = valid_subset, sampling_type = sampling_scheme)
 ```
 
 ## Running RSRC
 
 ```R
-RSRC_fit <- FitRSRCModel(valid_subset, vccc_dat, sampling_scheme,
+RSRC_fit <- FitRSRCModel(valid_subset, full_dat, sampling_scheme,
                          coef(RC_fit)[1], coef(RC_fit)[2])
 
-RSRC_boot <- boot(vccc_dat, RunRSRCBootstrap,
-                  strata = factor(vccc_dat$randomized), R = num_boot,
+RSRC_boot <- boot(full_dat, RunRSRCBootstrap,
+                  strata = factor(full_dat$randomized), R = num_boot,
                   dat_valid = valid_subset, sampling_type = sampling_scheme,
                   beta_x_start = coef(RC_fit)[1], beta_z_start = coef(RC_fit)[2])
 ```
@@ -78,10 +78,10 @@ RSRC_boot <- boot(vccc_dat, RunRSRCBootstrap,
 ## Running GRRC
 
 ```R
-GRRC_fit <- FitRakingModel(valid_subset, vccc_dat, "RC", sampling_scheme)
+GRRC_fit <- FitRakingModel(valid_subset, full_dat, "RC", sampling_scheme)
 
-GRRC_boot <- boot(vccc_dat, RunRakingBootstrap,
-                  strata = factor(vccc_dat$randomized), R = num_boot,
+GRRC_boot <- boot(full_dat, RunRakingBootstrap,
+                  strata = factor(full_dat$randomized), R = num_boot,
                   dat_valid = valid_subset, mod_rake = "RC", 
                   sampling_type = sampling_scheme)
 ```
@@ -89,10 +89,10 @@ GRRC_boot <- boot(vccc_dat, RunRakingBootstrap,
 ## Running GRN
 
 ```R
-GRN_fit <- FitRakingModel(valid_subset, vccc_dat, "naive")
+GRN_fit <- FitRakingModel(valid_subset, full_dat, "naive")
 
-GRN_boot <- boot(vccc_dat, RunRakingBootstrap,
-                 strata = factor(vccc_dat$randomized), R = num_boot,
+GRN_boot <- boot(full_dat, RunRakingBootstrap,
+                 strata = factor(full_dat$randomized), R = num_boot,
                  dat_valid = valid_subset, mod_rake = "naive", 
                  sampling_type = sampling_scheme)
 ```
@@ -100,10 +100,10 @@ GRN_boot <- boot(vccc_dat, RunRakingBootstrap,
 ## Running naive
 
 ```R
-naive_fit <- FitCoxModel(vccc_dat$time_star, vccc_dat$delta_star, vccc_dat$x_star, vccc_dat$z)
+naive_fit <- FitCoxModel(full_dat$time_star, full_dat$delta_star, full_dat$x_star, full_dat$z)
 
-naive_boot <- boot(vccc_dat, RunNaiveBootstrap,
-                   strata = factor(vccc_dat$randomized), R = num_boot)
+naive_boot <- boot(full_dat, RunNaiveBootstrap,
+                   strata = factor(full_dat$randomized), R = num_boot)
 
 ```
 
@@ -112,8 +112,8 @@ naive_boot <- boot(vccc_dat, RunNaiveBootstrap,
 ```R
 complete_case_fit <- FitCoxModel(valid_subset$time, valid_subset$delta, valid_subset$x, valid_subset$z)
 
-complete_case_boot <- boot(vccc_dat, RunCompleteCaseBootstrap,
-                           strata = factor(vccc_dat$randomized), R = num_boot,
+complete_case_boot <- boot(full_dat, RunCompleteCaseBootstrap,
+                           strata = factor(full_dat$randomized), R = num_boot,
                            dat_valid = valid_subset, 
                            sampling_type = sampling_scheme)
 
