@@ -73,7 +73,7 @@ FitRSRCModel <- function(valid_dat, dat_sim, sampling_type, beta_x_start, beta_z
                           function(i) z_mat[which_fail[i], i]))
 
   # Solve the Cox score equation to find the roots
-  score_roots <- tryCatch(multiroot(f = RSRCscore, start = c(beta_x_start, beta_z_start), maxiter = 1000, ctol = 0.001,
+  score_roots <- tryCatch(multiroot(f = RSRCscore, start = c(beta_x_start, beta_z_start), maxiter = 10000, ctol = 0.00001,
                                     xhat_mat = xhat_mat, xhat_subj = xhat_subj, z_mat = z_mat, z_subj = z_subj,
                                     xhat_risk_set = xhat_risk_set, z_risk_set = z_risk_set, risk_set_mat = risk_set_mat),
                           error = function(e) {
