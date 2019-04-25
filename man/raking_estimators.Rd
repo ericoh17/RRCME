@@ -4,12 +4,12 @@
 \alias{FitRakingModel}
 \title{Calculates raking estimates}
 \usage{
-FitRakingModel(valid_dat, dat_sim, mod, sampling_type)
+FitRakingModel(valid_dat, full_dat, mod, sampling_type)
 }
 \arguments{
 \item{valid_dat}{Validation subset dataset}
 
-\item{dat_sim}{Full dataset}
+\item{full_dat}{Full dataset}
 
 \item{mod}{String indicating which model to get influence
 functions from}

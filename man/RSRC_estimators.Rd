@@ -4,12 +4,13 @@
 \alias{FitRSRCModel}
 \title{Calculates regression calibration estimates}
 \usage{
-FitRSRCModel(valid_dat, dat_sim, sampling_type, beta_x_start, beta_z_start)
+FitRSRCModel(valid_dat, full_dat, sampling_type, beta_x_start,
+  beta_z_start)
 }
 \arguments{
 \item{valid_dat}{Validation subset}
 
-\item{dat_sim}{Full dataset}
+\item{full_dat}{Full dataset}
 
 \item{sampling_type}{String indicating either simple random
 sampling or case-cohort sampling}

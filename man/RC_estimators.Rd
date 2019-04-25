@@ -6,16 +6,16 @@
 \alias{CalcExpw}
 \title{Calculates regression calibration estimates}
 \usage{
-FitRCModel(valid_dat, dat_sim, sampling_type)
+FitRCModel(valid_dat, full_dat, sampling_type, return_coef)
 
-CalcExpX(valid_dat, dat_sim, sampling_type)
+CalcExpX(valid_dat, full_dat, sampling_type)
 
-CalcExpw(valid_dat, dat_sim, sampling_type)
+CalcExpw(valid_dat, full_dat, sampling_type)
 }
 \arguments{
 \item{valid_dat}{Validation subset}
 
-\item{dat_sim}{Full dataset}
+\item{full_dat}{Full dataset}
 
 \item{sampling_type}{String indicating either simple random
 sampling or case-cohort sampling}
