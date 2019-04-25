@@ -30,6 +30,7 @@ Then we can load the boot package to obtain standard errors:
 
 ```R
 library(boot)
+library(survey)
 ``` 
 
 In this example, we will read in a simulated dataset and
@@ -64,9 +65,9 @@ sampling_scheme <- "srs"
 
 ## Run RC
 
-The function to run RC is the `r FitRCModel` function.
-We obtain standard errors by calling the `r boot` function with the 
-`r RunRCBootstrap` function. 
+The function to run RC is the `FitRCModel` function.
+We obtain standard errors by calling the `boot` function with the 
+`RunRCBootstrap` function. 
 
 ```R
 RC_fit <- FitRCModel(valid_subset, full_dat, sampling_scheme)
@@ -78,9 +79,9 @@ RC_boot <- boot(full_dat, RunRCBootstrap,
 
 ## Run RSRC
 
-The function to run RSRC is the `r FitRSRCCModel` function. 
-We obtain standard errors by calling the `r boot` function with the 
-`r RunRSRCBootstrap` function. 
+The function to run RSRC is the `FitRSRCCModel` function. 
+We obtain standard errors by calling the `boot` function with the 
+`RunRSRCBootstrap` function. 
 
 ```R
 RSRC_fit <- FitRSRCModel(valid_subset, full_dat, sampling_scheme,
@@ -94,9 +95,9 @@ RSRC_boot <- boot(full_dat, RunRSRCBootstrap,
 
 ## Run GRRC
 
-The function to run GRRC is the `r FitRakingModel` function with the 'RC' argument. 
-We obtain standard errors by calling the `r boot` function with the 
-`r RunRakingBootstrap` function. 
+The function to run GRRC is the `FitRakingModel` function with the 'RC' argument. 
+We obtain standard errors by calling the `boot` function with the 
+`RunRakingBootstrap` function. 
 
 ```R
 GRRC_fit <- FitRakingModel(valid_subset, full_dat, "RC", sampling_scheme)
@@ -107,11 +108,11 @@ GRRC_boot <- boot(full_dat, RunRakingBootstrap,
                   sampling_type = sampling_scheme)
 ```
 
-## Running GRN
+## Run GRN
 
-The function to run GRRC is the `r FitRakingModel` function with the 'naive' argument. 
-We obtain standard errors by calling the `r boot` function with the 
-`r RunRakingBootstrap` function. 
+The function to run GRRC is the `FitRakingModel` function with the 'naive' argument. 
+We obtain standard errors by calling the `boot` function with the 
+`RunRakingBootstrap` function. 
 
 ```R
 GRN_fit <- FitRakingModel(valid_subset, full_dat, "naive")
@@ -122,7 +123,9 @@ GRN_boot <- boot(full_dat, RunRakingBootstrap,
                  sampling_type = sampling_scheme)
 ```
 
-## Running naive
+We can also run the naive analysis and a complete case analysis for comparison. 
+
+## Run naive
 
 ```R
 naive_fit <- FitCoxModel(full_dat$time_star, full_dat$delta_star, full_dat$x_star, full_dat$z)
@@ -132,10 +135,15 @@ naive_boot <- boot(full_dat, RunNaiveBootstrap,
 
 ```
 
-## Running complete case
+## Run complete case
 
 ```R
+# simple random sampling
 complete_case_fit <- FitCoxModel(valid_subset$time, valid_subset$delta, valid_subset$x, valid_subset$z)
+
+# case-cohort sampling
+#complete_case_design <- twophase(id = list(~id, ~id), subset = ~randomized, strata = list(NULL, ~delta_star), data = full_dat)
+#complete_case_fit <- svycoxph(Surv(time, delta) ~ x + z, design = complete_case_design)
 
 complete_case_boot <- boot(full_dat, RunCompleteCaseBootstrap,
                            strata = factor(full_dat$randomized), R = num_boot,
