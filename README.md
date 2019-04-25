@@ -37,8 +37,8 @@ In this example, we will read in a simulated dataset and
 corresponding validation subset. 
 
 ```R
-full_dat <- read.csv("example_full_dat.csv", row.names = 1)
-valid_subset <- read.csv("example_valid_subset.csv", row.names = 1)
+data(example_full_dat_CC)
+data(example_valid_subset_CC)
 ```
 
 The raking estimators require that the full dataset contains the true
@@ -143,7 +143,7 @@ complete_case_fit <- FitCoxModel(valid_subset$time, valid_subset$delta, valid_su
 
 # case-cohort sampling
 #complete_case_design <- twophase(id = list(~id, ~id), subset = ~randomized, 
-                                  strata = list(NULL, ~delta_star), data = full_dat)
+#                                  strata = list(NULL, ~delta_star), data = full_dat)
 #complete_case_fit <- svycoxph(Surv(time, delta) ~ x + z, design = complete_case_design)
 
 complete_case_boot <- boot(full_dat, RunCompleteCaseBootstrap,
