@@ -26,6 +26,12 @@ library(raking-RC-ME)
 
 ## Getting Started
 
+Then we can load the boot package to obtain standard errors:
+
+```R
+library(boot)
+``` 
+
 In this example, we will read in a simulated dataset and
 corresponding validation subset. 
 
@@ -35,7 +41,10 @@ valid_subset <- read.csv("example_valid_subset.csv", row.names = 1)
 ```
 
 The raking estimators require that the full dataset contains the true
-variables for subjects that are in the validation subset.
+variables for subjects that are in the validation subset. The 
+implementation also requires that the full dataset contains a column 
+called 'randomized' that is TRUE for those subjects selected in 
+the validation subset and FALSE otherwise.
 
 ```R
 full_dat$time <- full_dat$delta <- full_dat$x <- NA
@@ -45,15 +54,19 @@ full_dat$delta[full_dat$randomized == TRUE] <- valid_subset$delta
 full_dat$x[full_dat$randomized == TRUE] <- valid_subset$x
 ```
 
-Set the sampling scheme for the validation subset:
+Set the sampling scheme for the validation subset
 ('srs' for simple random sampling and
-'cc' for case-cohort sampling)
+'cc' for case-cohort sampling):
 ```R
 sampling_scheme <- "srs"
 #sampling_scheme <- "cc"
 ```
 
-## Running RC
+## Run RC
+
+The function to run RC is the `r FitRCModel` function.
+We obtain standard errors by calling the `r boot` function with the 
+`r RunRCBootstrap` function. 
 
 ```R
 RC_fit <- FitRCModel(valid_subset, full_dat, sampling_scheme)
@@ -63,7 +76,11 @@ RC_boot <- boot(full_dat, RunRCBootstrap,
                 dat_valid = valid_subset, sampling_type = sampling_scheme)
 ```
 
-## Running RSRC
+## Run RSRC
+
+The function to run RSRC is the `r FitRSRCCModel` function. 
+We obtain standard errors by calling the `r boot` function with the 
+`r RunRSRCBootstrap` function. 
 
 ```R
 RSRC_fit <- FitRSRCModel(valid_subset, full_dat, sampling_scheme,
@@ -75,7 +92,11 @@ RSRC_boot <- boot(full_dat, RunRSRCBootstrap,
                   beta_x_start = coef(RC_fit)[1], beta_z_start = coef(RC_fit)[2])
 ```
 
-## Running GRRC
+## Run GRRC
+
+The function to run GRRC is the `r FitRakingModel` function with the 'RC' argument. 
+We obtain standard errors by calling the `r boot` function with the 
+`r RunRakingBootstrap` function. 
 
 ```R
 GRRC_fit <- FitRakingModel(valid_subset, full_dat, "RC", sampling_scheme)
@@ -87,6 +108,10 @@ GRRC_boot <- boot(full_dat, RunRakingBootstrap,
 ```
 
 ## Running GRN
+
+The function to run GRRC is the `r FitRakingModel` function with the 'naive' argument. 
+We obtain standard errors by calling the `r boot` function with the 
+`r RunRakingBootstrap` function. 
 
 ```R
 GRN_fit <- FitRakingModel(valid_subset, full_dat, "naive")
