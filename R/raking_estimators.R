@@ -33,6 +33,8 @@ FitRakingModel <- function(valid_dat, dat_sim, mod, sampling_type) {
 
   raking_fit <- FitCalibrationModel(phase2_calibration)
 
+  return(list(raking_fit[[1]], raking_fit[[2]]))
+
 }
 
 
@@ -79,8 +81,7 @@ FitCalibrationModel <- function(raking_dat) {
 
   raking_mod <- svycoxph(Surv(time, delta) ~ x + z, design = raking_dat)
 
-  return(list(raking_mod$coef[1], sqrt(raking_mod$var[1,1]),
-              raking_mod$coef[2], sqrt(raking_mod$var[2,2])))
+  return(list(raking_mod$coef[1], raking_mod$coef[2]))
 
 }
 
