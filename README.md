@@ -1,5 +1,5 @@
 
-# raking-RC-ME 1.0.0
+# RRCME 1.0.0
 
 This package implements four different estimators to correct 
 for bias in the presence of correlated covariate and time-to-event 
@@ -20,8 +20,8 @@ To install and load this package in R from GitHub, run the following commands:
 ```R
 install.packages("devtools")
 library(devtools)
-devtools::install_github("ericoh17/raking-RC-ME")
-library(raking-RC-ME)
+devtools::install_github("ericoh17/RRCME")
+library(RRCME)
 ```  
 
 ## Getting Started
@@ -79,7 +79,7 @@ RC_boot <- boot(full_dat, RunRCBootstrap,
 
 ## Run RSRC
 
-The function to run RSRC is the `FitRSRCCModel` function. 
+The function to run RSRC is the `FitRSRCModel` function. 
 We obtain standard errors by calling the `boot` function with the 
 `RunRSRCBootstrap` function. 
 
@@ -142,7 +142,8 @@ naive_boot <- boot(full_dat, RunNaiveBootstrap,
 complete_case_fit <- FitCoxModel(valid_subset$time, valid_subset$delta, valid_subset$x, valid_subset$z)
 
 # case-cohort sampling
-#complete_case_design <- twophase(id = list(~id, ~id), subset = ~randomized, strata = list(NULL, ~delta_star), data = full_dat)
+#complete_case_design <- twophase(id = list(~id, ~id), subset = ~randomized, 
+                                  strata = list(NULL, ~delta_star), data = full_dat)
 #complete_case_fit <- svycoxph(Surv(time, delta) ~ x + z, design = complete_case_design)
 
 complete_case_boot <- boot(full_dat, RunCompleteCaseBootstrap,
