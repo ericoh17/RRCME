@@ -6,7 +6,7 @@
 \alias{CalcExpw}
 \title{Calculates regression calibration estimates}
 \usage{
-FitRCModel(valid_dat, dat_sim, sampling_type, return_coef = FALSE)
+FitRCModel(valid_dat, dat_sim, sampling_type)
 
 CalcExpX(valid_dat, dat_sim, sampling_type)
 
@@ -19,9 +19,6 @@ CalcExpw(valid_dat, dat_sim, sampling_type)
 
 \item{sampling_type}{String indicating either simple random
 sampling or case-cohort sampling}
-
-\item{return_coef}{Boolean indicating whether
-to return a list of coefficients}
 
 \item{cox_time}{Censored time-to-event}
 

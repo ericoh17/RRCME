@@ -8,14 +8,13 @@
 \alias{RunNaiveBootstrap}
 \title{Calculates bootstrap estimates for all methods}
 \usage{
-RunRCBootstrap(all_dat, inds, dat_valid, sampling_type)
+RunRCBootstrap(all_dat, inds, sampling_type)
 
-RunRSRCBootstrap(all_dat, inds, dat_valid, sampling_type, beta_x_start,
-  beta_z_start)
+RunRSRCBootstrap(all_dat, inds, sampling_type, beta_x_start, beta_z_start)
 
-RunRakingBootstrap(all_dat, inds, dat_valid, mod_rake, sampling_type)
+RunRakingBootstrap(all_dat, inds, mod_rake, sampling_type)
 
-RunCompleteCaseBootstrap(all_dat, inds, dat_valid, sampling_type)
+RunCompleteCaseBootstrap(all_dat, inds, sampling_type)
 
 RunNaiveBootstrap(all_dat, inds)
 }
@@ -23,8 +22,6 @@ RunNaiveBootstrap(all_dat, inds)
 \item{all_dat}{Full, original dataset}
 
 \item{inds}{Vector of indices defining bootstrap sample}
-
-\item{dat_valid}{Original validation subset}
 
 \item{sampling_type}{String indicating either simple random
 sampling or case-cohort sampling}
@@ -35,6 +32,8 @@ sampling or case-cohort sampling}
 
 \item{mod_rake}{String indicating which model to get influence
 functions from}
+
+\item{dat_valid}{Original validation subset}
 }
 \value{
 A vector of bootstrap beta_x and beta_z estimates
