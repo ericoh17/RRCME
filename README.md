@@ -59,8 +59,8 @@ Set the sampling scheme for the validation subset
 ('srs' for simple random sampling and
 'cc' for case-cohort sampling):
 ```R
-sampling_scheme <- "srs"
 #sampling_scheme <- "cc"
+sampling_scheme <- "srs"
 ```
 
 ## Run RC
@@ -138,13 +138,13 @@ naive_boot <- boot(full_dat, RunNaiveBootstrap,
 ## Run complete case
 
 ```R
-# simple random sampling
-complete_case_fit <- FitCoxModel(valid_subset$time, valid_subset$delta, valid_subset$x, valid_subset$z)
-
 # case-cohort sampling
-#complete_case_design <- twophase(id = list(~id, ~id), subset = ~randomized, 
-#                                  strata = list(NULL, ~delta_star), data = full_dat)
-#complete_case_fit <- svycoxph(Surv(time, delta) ~ x + z, design = complete_case_design)
+complete_case_design <- twophase(id = list(~id, ~id), subset = ~randomized, 
+                                 strata = list(NULL, ~delta_star), data = full_dat)
+complete_case_fit <- svycoxph(Surv(time, delta) ~ x + z, design = complete_case_design)
+
+# simple random sampling
+#complete_case_fit <- FitCoxModel(valid_subset$time, valid_subset$delta, valid_subset$x, valid_subset$z)
 
 complete_case_boot <- boot(full_dat, RunCompleteCaseBootstrap,
                            strata = factor(full_dat$randomized), R = num_boot,
