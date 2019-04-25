@@ -34,7 +34,7 @@
 #'
 #' @rdname RC_estimators
 #' @export
-FitRCModel <- function(valid_dat, dat_sim, sampling_type) {
+FitRCModel <- function(valid_dat, dat_sim, sampling_type, return_coef) {
 
   if (sampling_type == "cc") {
     valid_dat <- valid_dat %>%
@@ -49,18 +49,27 @@ FitRCModel <- function(valid_dat, dat_sim, sampling_type) {
   w_hat <- CalcExpw(valid_dat, dat_sim, sampling_type)
   time_hat <- dat_sim$time_star - w_hat
 
-  rc_mod <- FitCoxModel(time_hat, dat_sim$delta_star, x_hat, dat_sim$z)
+  rc_mod <- FitCoxModel(time_hat, dat_sim$delta_star, x_hat, dat_sim$z,
+                        return_coef)
 
-  return(list(rc_mod[[1]], rc_mod[[2]]))
+  if (return_coef == TRUE) {
+    return(list(rc_mod[[1]], rc_mod[[2]]))
+  } else {
+    return(rc_mod)
+  }
 
 }
 
 
-FitCoxModel <- function(cox_time, cox_delta, cox_x, cox_z) {
+FitCoxModel <- function(cox_time, cox_delta, cox_x, cox_z, return_coef) {
 
   cox_mod <- coxph(Surv(cox_time, cox_delta) ~ cox_x + cox_z)
 
-  return(list(cox_mod$coef[1], cox_mod$coef[2]))
+  if (return_coef == TRUE) {
+    return(list(cox_mod$coef[1], cox_mod$coef[2]))
+  } else {
+    return(cox_mod)
+  }
 
 }
 

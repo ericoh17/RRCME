@@ -46,7 +46,8 @@ RunRCBootstrap <- function(all_dat, inds, sampling_type) {
   dat_sim <- all_dat[inds,]
   valid_dat <- dat_sim %>% filter(randomized == TRUE)
 
-  rc_boot_mod <- FitRCModel(valid_dat, dat_sim, sampling_type)
+  rc_boot_mod <- FitRCModel(valid_dat, dat_sim, sampling_type,
+                            return_coef = TRUE)
 
   return(c(rc_boot_mod[[1]], rc_boot_mod[[2]]))
 
@@ -96,7 +97,8 @@ RunCompleteCaseBootstrap <- function(all_dat, inds, sampling_type) {
 
   if (sampling_type == "srs") {
 
-    complete_case_boot_mod <- FitCoxModel(valid_dat$time, valid_dat$delta, valid_dat$x, valid_dat$z)
+    complete_case_boot_mod <- FitCoxModel(valid_dat$time, valid_dat$delta, valid_dat$x, valid_dat$z,
+                                          return_coef = TRUE)
 
     return(c(complete_case_boot_mod[[1]], complete_case_boot_mod[[2]]))
 
@@ -119,7 +121,8 @@ RunNaiveBootstrap <- function(all_dat, inds) {
 
   dat_sim <- all_dat[inds,]
 
-  naive_boot_mod <- FitCoxModel(dat_sim$time_star, dat_sim$delta_star, dat_sim$x_star, dat_sim$z)
+  naive_boot_mod <- FitCoxModel(dat_sim$time_star, dat_sim$delta_star, dat_sim$x_star, dat_sim$z,
+                                return_coef = TRUE)
 
   return(c(naive_boot_mod[[1]], naive_boot_mod[[2]]))
 

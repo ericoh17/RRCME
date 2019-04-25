@@ -42,9 +42,11 @@ FitRakingModel <- function(valid_dat, dat_sim, mod, sampling_type) {
 GetInfluenceFcn <- function(valid_dat, dat_sim, mod, sampling_type) {
 
   if (mod == "RC") {
-    inf_func_mod <- FitRCModel(valid_dat, dat_sim, sampling_type)  # fit RC model
+    inf_func_mod <- FitRCModel(valid_dat, dat_sim, sampling_type,
+                               return_coef = FALSE)  # fit RC model
   } else if (mod == "naive") {
-    inf_func_mod <- FitCoxModel(dat_sim$time_star, dat_sim$delta_star, dat_sim$x_star, dat_sim$z)
+    inf_func_mod <- FitCoxModel(dat_sim$time_star, dat_sim$delta_star, dat_sim$x_star, dat_sim$z,
+                                return_coef = FALSE)
   } else {
     stop("Specify 'RC' or 'naive' for calibration")
   }
