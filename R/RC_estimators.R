@@ -18,7 +18,7 @@
 #'
 #' @param valid_dat Validation subset
 #'
-#' @param dat_sim Full dataset
+#' @param full_dat Full dataset
 #'
 #' @param sampling_type String indicating either simple random
 #' sampling or case-cohort sampling
@@ -34,22 +34,22 @@
 #'
 #' @rdname RC_estimators
 #' @export
-FitRCModel <- function(valid_dat, dat_sim, sampling_type, return_coef) {
+FitRCModel <- function(valid_dat, full_dat, sampling_type, return_coef) {
 
   if (sampling_type == "cc") {
     valid_dat <- valid_dat %>%
       mutate(wts = 1/twophase(id = list(~id, ~id),
                               subset = ~randomized,
                               strata = list(NULL, ~delta_star),
-                              data = dat_sim)$prob)
+                              data = full_dat)$prob)
   }
 
-  x_hat <- CalcExpX(valid_dat, dat_sim, sampling_type)
+  x_hat <- CalcExpX(valid_dat, full_dat, sampling_type)
 
-  w_hat <- CalcExpw(valid_dat, dat_sim, sampling_type)
-  time_hat <- dat_sim$time_star - w_hat
+  w_hat <- CalcExpw(valid_dat, full_dat, sampling_type)
+  time_hat <- full_dat$time_star - w_hat
 
-  rc_mod <- FitCoxModel(time_hat, dat_sim$delta_star, x_hat, dat_sim$z,
+  rc_mod <- FitCoxModel(time_hat, full_dat$delta_star, x_hat, full_dat$z,
                         return_coef)
 
   if (return_coef == TRUE) {
@@ -76,7 +76,7 @@ FitCoxModel <- function(cox_time, cox_delta, cox_x, cox_z, return_coef) {
 
 #' @rdname RC_estimators
 #' @export
-CalcExpX <- function(valid_dat, dat_sim, sampling_type) {
+CalcExpX <- function(valid_dat, full_dat, sampling_type) {
 
   if (sampling_type == "cc") {
     x_mod <- lm(x ~ x_star + z, data = valid_dat, weights = wts)
@@ -84,14 +84,14 @@ CalcExpX <- function(valid_dat, dat_sim, sampling_type) {
     x_mod <- lm(x ~ x_star + z, data = valid_dat)
   }
 
-  x_predict <- predict(x_mod, newdata = dat_sim)
+  x_predict <- predict(x_mod, newdata = full_dat)
 
 }
 
 
 #' @rdname RC_estimators
 #' @export
-CalcExpw <- function(valid_dat, dat_sim, sampling_type) {
+CalcExpw <- function(valid_dat, full_dat, sampling_type) {
 
   if (sampling_type == "cc") {
     w_mod <- lm(total_y_err ~ x_star + z, data = valid_dat, weights = wts)
@@ -99,7 +99,7 @@ CalcExpw <- function(valid_dat, dat_sim, sampling_type) {
     w_mod <- lm(total_y_err ~ x_star + z, data = valid_dat)
   }
 
-  w_predict <- predict(w_mod, newdata = dat_sim)
+  w_predict <- predict(w_mod, newdata = full_dat)
 
 }
 

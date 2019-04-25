@@ -43,10 +43,10 @@
 #' @export
 RunRCBootstrap <- function(all_dat, inds, sampling_type) {
 
-  dat_sim <- all_dat[inds,]
-  valid_dat <- dat_sim %>% filter(randomized == TRUE)
+  full_dat <- all_dat[inds,]
+  valid_dat <- full_dat %>% filter(randomized == TRUE)
 
-  rc_boot_mod <- FitRCModel(valid_dat, dat_sim, sampling_type,
+  rc_boot_mod <- FitRCModel(valid_dat, full_dat, sampling_type,
                             return_coef = TRUE)
 
   return(c(rc_boot_mod[[1]], rc_boot_mod[[2]]))
@@ -59,10 +59,10 @@ RunRCBootstrap <- function(all_dat, inds, sampling_type) {
 RunRSRCBootstrap <- function(all_dat, inds, sampling_type,
                              beta_x_start, beta_z_start) {
 
-  dat_sim <- all_dat[inds,]
-  valid_dat <- dat_sim %>% filter(randomized == TRUE)
+  full_dat <- all_dat[inds,]
+  valid_dat <- full_dat %>% filter(randomized == TRUE)
 
-  RSRC_boot_mod <- FitRSRCModel(valid_dat, dat_sim, sampling_type,
+  RSRC_boot_mod <- FitRSRCModel(valid_dat, full_dat, sampling_type,
                                 beta_x_start, beta_z_start)
 
   return(c(RSRC_boot_mod[[1]], RSRC_boot_mod[[2]]))
@@ -74,13 +74,13 @@ RunRSRCBootstrap <- function(all_dat, inds, sampling_type,
 #' @export
 RunRakingBootstrap <- function(all_dat, inds, mod_rake, sampling_type) {
 
-  dat_sim <- all_dat[inds,]
-  valid_dat <- dat_sim %>% filter(randomized == TRUE)
+  full_dat <- all_dat[inds,]
+  valid_dat <- full_dat %>% filter(randomized == TRUE)
 
   if (sampling_type == "cc") {
-    raking_boot_mod <- FitRakingModel(valid_dat, dat_sim, mod_rake, sampling_type)
+    raking_boot_mod <- FitRakingModel(valid_dat, full_dat, mod_rake, sampling_type)
   } else if (sampling_type == "srs") {
-    raking_boot_mod <- FitRakingModel(valid_dat, dat_sim, mod_rake, sampling_type)
+    raking_boot_mod <- FitRakingModel(valid_dat, full_dat, mod_rake, sampling_type)
   }
 
   return(c(raking_boot_mod[[1]], raking_boot_mod[[2]]))
@@ -92,8 +92,8 @@ RunRakingBootstrap <- function(all_dat, inds, mod_rake, sampling_type) {
 #' @export
 RunCompleteCaseBootstrap <- function(all_dat, inds, sampling_type) {
 
-  dat_sim <- all_dat[inds,]
-  valid_dat <- dat_sim %>% filter(randomized == TRUE)
+  full_dat <- all_dat[inds,]
+  valid_dat <- full_dat %>% filter(randomized == TRUE)
 
   if (sampling_type == "srs") {
 
@@ -105,7 +105,7 @@ RunCompleteCaseBootstrap <- function(all_dat, inds, sampling_type) {
 
   } else if (sampling_type == "cc") {
 
-    complete_case_boot_design <- twophase(id = list(~id, ~id), subset = ~randomized, strata = list(NULL, ~delta_star), data = dat_sim)
+    complete_case_boot_design <- twophase(id = list(~id, ~id), subset = ~randomized, strata = list(NULL, ~delta_star), data = full_dat)
     complete_case_boot_mod <- svycoxph(Surv(time, delta) ~ x + z, design = complete_case_boot_design)
 
     return(c(coef(complete_case_boot_mod)[1], coef(complete_case_boot_mod)[2]))
@@ -119,9 +119,9 @@ RunCompleteCaseBootstrap <- function(all_dat, inds, sampling_type) {
 #' @export
 RunNaiveBootstrap <- function(all_dat, inds) {
 
-  dat_sim <- all_dat[inds,]
+  full_dat <- all_dat[inds,]
 
-  naive_boot_mod <- FitCoxModel(dat_sim$time_star, dat_sim$delta_star, dat_sim$x_star, dat_sim$z,
+  naive_boot_mod <- FitCoxModel(full_dat$time_star, full_dat$delta_star, full_dat$x_star, full_dat$z,
                                 return_coef = TRUE)
 
   return(c(naive_boot_mod[[1]], naive_boot_mod[[2]]))

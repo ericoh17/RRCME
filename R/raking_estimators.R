@@ -7,7 +7,7 @@
 #'
 #' @param valid_dat Validation subset dataset
 #'
-#' @param dat_sim Full dataset
+#' @param full_dat Full dataset
 #'
 #' @param mod String indicating which model to get influence
 #' functions from
@@ -23,11 +23,11 @@
 #'
 #' @rdname raking_estimators
 #' @export
-FitRakingModel <- function(valid_dat, dat_sim, mod, sampling_type) {
+FitRakingModel <- function(valid_dat, full_dat, mod, sampling_type) {
 
-  inf_func <- GetInfluenceFcn(valid_dat, dat_sim, mod, sampling_type)
+  inf_func <- GetInfluenceFcn(valid_dat, full_dat, mod, sampling_type)
 
-  dat_IF <- bind_cols(dat_sim, inf_func)
+  dat_IF <- bind_cols(full_dat, inf_func)
 
   phase2_calibration <- CalibrateDesign(dat_IF, sampling_type)
 
@@ -39,13 +39,13 @@ FitRakingModel <- function(valid_dat, dat_sim, mod, sampling_type) {
 
 
 
-GetInfluenceFcn <- function(valid_dat, dat_sim, mod, sampling_type) {
+GetInfluenceFcn <- function(valid_dat, full_dat, mod, sampling_type) {
 
   if (mod == "RC") {
-    inf_func_mod <- FitRCModel(valid_dat, dat_sim, sampling_type,
+    inf_func_mod <- FitRCModel(valid_dat, full_dat, sampling_type,
                                return_coef = FALSE)  # fit RC model
   } else if (mod == "naive") {
-    inf_func_mod <- FitCoxModel(dat_sim$time_star, dat_sim$delta_star, dat_sim$x_star, dat_sim$z,
+    inf_func_mod <- FitCoxModel(full_dat$time_star, full_dat$delta_star, full_dat$x_star, full_dat$z,
                                 return_coef = FALSE)
   } else {
     stop("Specify 'RC' or 'naive' for calibration")
