@@ -117,7 +117,9 @@ RC_boot <- boot(full_dat,
 
 The function to run RSRC is the `FitRSRCModel` function. 
 We obtain standard errors by calling the `boot` function with the 
-`RunRSRCBootstrap` function. 
+`RunRSRCBootstrap` function. Running RSRC requires initial guesses
+for the coefficients of X and Z; one logical choice is 
+the regression calibration coefficients from `RC_fit`.
 
 ```R
 RSRC_fit <- FitRSRCModel(valid_subset, full_dat, sampling_scheme,
