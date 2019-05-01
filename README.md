@@ -40,8 +40,13 @@ In this example, we will read in a simulated dataset and
 corresponding validation subset. 
 
 ```R
-data(example_full_dat_CC)
+data(example_full_dat)
+
+# case-cohort validation subset
 data(example_valid_subset_CC)
+
+# simple random sample validation subset
+#data(example_valid_subset_srs)
 ```
 
 The raking estimators require that the full dataset contains the true
