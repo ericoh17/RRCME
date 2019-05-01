@@ -43,7 +43,7 @@ corresponding validation subset.
 data(example_full_dat)
 
 # case-cohort validation subset
-data(example_valid_subset_CC)
+data(example_valid_subset_cc)
 
 # simple random sample validation subset
 #data(example_valid_subset_srs)
