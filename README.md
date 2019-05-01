@@ -1,10 +1,11 @@
 
-# RRCME 1.0.0
+# RRCME
 
 This package implements four different estimators to correct 
-for bias in the presence of correlated covariate and time-to-event 
-measurement error in survival analysis. The four estimators are 
-(1) regression calibration (RC), (2) risk set regression calibration (RSRC),
+for bias in time-to-event data in the presence of correlated 
+covariate and censored event time measurement error. The four 
+estimators are (1) regression calibration (RC), 
+(2) risk set regression calibration (RSRC),
 (3) generalized raking regression calibration (GRRC), and 
 (4) generalized raking naive (GRN). All of the methods assume the 
 existence of a validation subset, which can be selected using
@@ -26,11 +27,13 @@ library(RRCME)
 
 ## Getting Started
 
-Then we can load the boot package to obtain standard errors:
+Next we load the boot package to run the bootstrap which
+is required to obtain standard errors and set the 
+number of bootstrap replicates desired:
 
 ```R
 library(boot)
-library(survey)
+num_boot <- 250
 ``` 
 
 In this example, we will read in a simulated dataset and
@@ -115,7 +118,7 @@ We obtain standard errors by calling the `boot` function with the
 `RunRakingBootstrap` function. 
 
 ```R
-GRN_fit <- FitRakingModel(valid_subset, full_dat, "naive")
+GRN_fit <- FitRakingModel(valid_subset, full_dat, "naive", sampling_scheme)
 
 GRN_boot <- boot(full_dat, RunRakingBootstrap,
                  strata = factor(full_dat$randomized), R = num_boot,
@@ -123,33 +126,4 @@ GRN_boot <- boot(full_dat, RunRakingBootstrap,
                  sampling_type = sampling_scheme)
 ```
 
-We can also run the naive analysis and a complete case analysis for comparison. 
-
-## Run naive
-
-```R
-naive_fit <- FitCoxModel(full_dat$time_star, full_dat$delta_star, full_dat$x_star, full_dat$z)
-
-naive_boot <- boot(full_dat, RunNaiveBootstrap,
-                   strata = factor(full_dat$randomized), R = num_boot)
-
-```
-
-## Run complete case
-
-```R
-# case-cohort sampling
-complete_case_design <- twophase(id = list(~id, ~id), subset = ~randomized, 
-                                 strata = list(NULL, ~delta_star), data = full_dat)
-complete_case_fit <- svycoxph(Surv(time, delta) ~ x + z, design = complete_case_design)
-
-# simple random sampling
-#complete_case_fit <- FitCoxModel(valid_subset$time, valid_subset$delta, valid_subset$x, valid_subset$z)
-
-complete_case_boot <- boot(full_dat, RunCompleteCaseBootstrap,
-                           strata = factor(full_dat$randomized), R = num_boot,
-                           dat_valid = valid_subset, 
-                           sampling_type = sampling_scheme)
-
-```
 
