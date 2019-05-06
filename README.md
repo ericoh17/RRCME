@@ -109,7 +109,6 @@ RC_boot <- boot(full_dat,
                 RunRCBootstrap, 
                 strata = factor(full_dat$randomized), 
                 R = num_boot,
-                dat_valid = valid_subset, 
                 sampling_type = sampling_scheme)
 ```
 
@@ -129,7 +128,6 @@ RSRC_boot <- boot(full_dat,
                   RunRSRCBootstrap,
                   strata = factor(full_dat$randomized), 
                   R = num_boot,
-                  dat_valid = valid_subset, 
                   sampling_type = sampling_scheme,
                   beta_x_start = RC_fit[[1]], 
                   beta_z_start = RC_fit[[2]])
@@ -149,7 +147,6 @@ GRRC_boot <- boot(full_dat,
                   RunRakingBootstrap,
                   strata = factor(full_dat$randomized), 
                   R = num_boot,
-                  dat_valid = valid_subset, 
                   mod_rake = "RC", 
                   sampling_type = sampling_scheme)
 ```
@@ -168,7 +165,6 @@ GRN_boot <- boot(full_dat,
                  RunRakingBootstrap,
                  strata = factor(full_dat$randomized), 
                  R = num_boot,
-                 dat_valid = valid_subset, 
                  mod_rake = "naive", 
                  sampling_type = sampling_scheme)
 ```
