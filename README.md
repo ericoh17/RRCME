@@ -95,78 +95,136 @@ sampling_scheme <- "cc"
 #sampling_scheme <- "srs"
 ```
 
+If the validation subset was selected by 
+case-cohort sampling, we need to create an 
+additional variable called `cc_strata` that
+defines the correct strata for the bootstrap.
+
+```R
+full_dat$cc_strata <- NA
+
+full_data$cc_strata[full_data$randomized == FALSE] <- 1
+full_data$cc_strata[full_data$randomized == TRUE & full_dat$delta_star == 1] <- 2
+full_data$cc_strata[full_data$randomized == TRUE & full_dat$delta_star == 0] <- 3
+```
+
 ## Run RC
 
-The function to run RC is the `FitRCModel` function.
-We obtain standard errors by calling the `boot` function with the 
-`RunRCBootstrap` function. 
+The function to run RC is `FitRCModel`. We obtain 
+standard errors by calling the `boot` function with the 
+`RunRCBootstrap` function. Note the differences in the
+strata argument for CC vs SRS sampling.
 
 ```R
 RC_fit <- FitRCModel(valid_subset, full_dat, 
-                     sampling_scheme, return_coef = TRUE)
-
+                     sampling_scheme, 
+                     return_coef = TRUE)
+                     
+# CC RC bootstrap
 RC_boot <- boot(full_dat, 
                 RunRCBootstrap, 
-                strata = factor(full_dat$randomized), 
+                strata = factor(full_dat$cc_strata), 
                 R = num_boot,
                 sampling_type = sampling_scheme)
+
+# SRS RC bootstrap
+#RC_boot <- boot(full_dat, 
+#                RunRCBootstrap, 
+#                strata = factor(full_dat$randomized), 
+#                R = num_boot,
+#                sampling_type = sampling_scheme)
 ```
 
 ## Run RSRC
 
-The function to run RSRC is the `FitRSRCModel` function. 
+The function to run RSRC is `FitRSRCModel`. 
 We obtain standard errors by calling the `boot` function with the 
 `RunRSRCBootstrap` function. Running RSRC requires initial guesses
 for the coefficients of X and Z; one logical choice is 
-the regression calibration coefficients from `RC_fit`.
+the regression calibration coefficients from `RC_fit`. Note
+the differences in the strata argument for CC vs SRS sampling.
 
 ```R
-RSRC_fit <- FitRSRCModel(valid_subset, full_dat, sampling_scheme,
-                         RC_fit[[1]], RC_fit[[2]])
-
+RSRC_fit <- FitRSRCModel(valid_subset, full_dat, 
+                         sampling_scheme,
+                         RC_fit[[1]], 
+                         RC_fit[[2]])
+                         
+# CC RSRC bootstrap
 RSRC_boot <- boot(full_dat, 
                   RunRSRCBootstrap,
-                  strata = factor(full_dat$randomized), 
+                  strata = factor(full_dat$cc_strata), 
                   R = num_boot,
                   sampling_type = sampling_scheme,
                   beta_x_start = RC_fit[[1]], 
                   beta_z_start = RC_fit[[2]])
+
+# SRS RSRC bootstrap
+#RSRC_boot <- boot(full_dat, 
+#                  RunRSRCBootstrap,
+#                  strata = factor(full_dat$randomized), 
+#                  R = num_boot,
+#                  sampling_type = sampling_scheme,
+#                  beta_x_start = RC_fit[[1]], 
+#                  beta_z_start = RC_fit[[2]])
 ```
 
 ## Run GRRC
 
-The function to run GRRC is the `FitRakingModel` function with the 'RC' argument. 
-We obtain standard errors by calling the `boot` function with the 
-`RunRakingBootstrap` function. 
+The function to run GRRC is `FitRakingModel` with 'RC' for the
+mod_rake argument. We obtain standard errors by calling the 
+`boot` function with the `RunRakingBootstrap` function. 
+Note the differences in the strata argument for CC vs SRS sampling.
 
 ```R
 GRRC_fit <- FitRakingModel(valid_subset, full_dat, 
-                           "RC", sampling_scheme)
+                           mod_rake = "RC", 
+                           sampling_scheme)
 
+# CC GRRC bootstrap
 GRRC_boot <- boot(full_dat, 
                   RunRakingBootstrap,
-                  strata = factor(full_dat$randomized), 
+                  strata = factor(full_dat$cc_strata), 
                   R = num_boot,
                   mod_rake = "RC", 
                   sampling_type = sampling_scheme)
+
+# SRS GRRC bootstrap
+#GRRC_boot <- boot(full_dat, 
+#                  RunRakingBootstrap,
+#                  strata = factor(full_dat$randomized), 
+#                  R = num_boot,
+#                  mod_rake = "RC", 
+#                  sampling_type = sampling_scheme)
 ```
 
 ## Run GRN
 
-The function to run GRRC is the `FitRakingModel` function with the 'naive' argument. 
-We obtain standard errors by calling the `boot` function with the 
-`RunRakingBootstrap` function. 
+The function to run GRRC is `FitRakingModel` with 'naive' for the
+mod_rake argument. We obtain standard errors by calling the 
+`boot` function with the `RunRakingBootstrap` function. 
+Note the differences in the strata argument for CC vs SRS sampling.
 
 ```R
 GRN_fit <- FitRakingModel(valid_subset, full_dat, 
-                          "naive", sampling_scheme)
+                          mod_rake = "naive", 
+                          sampling_scheme)
 
+# CC GRN bootstrap
 GRN_boot <- boot(full_dat, 
                  RunRakingBootstrap,
-                 strata = factor(full_dat$randomized), 
+                 strata = factor(full_dat$cc_strata), 
                  R = num_boot,
                  mod_rake = "naive", 
                  sampling_type = sampling_scheme)
+
+# SRS GRN bootstrap
+#GRN_boot <- boot(full_dat, 
+#                 RunRakingBootstrap,
+#                 strata = factor(full_dat$randomized), 
+#                 R = num_boot,
+#                 mod_rake = "naive", 
+#                 sampling_type = sampling_scheme)
 ```
 
 ## Getting estimates and standard errors
