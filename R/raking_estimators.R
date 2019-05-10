@@ -9,7 +9,7 @@
 #'
 #' @param full_dat Full dataset
 #'
-#' @param mod String indicating which model to get influence
+#' @param mod_rake String indicating which model to get influence
 #' functions from
 #'
 #' @param sampling_type String indicating either simple random
@@ -23,9 +23,9 @@
 #'
 #' @rdname raking_estimators
 #' @export
-FitRakingModel <- function(valid_dat, full_dat, mod, sampling_type) {
+FitRakingModel <- function(valid_dat, full_dat, mod_rake, sampling_type) {
 
-  inf_func <- GetInfluenceFcn(valid_dat, full_dat, mod, sampling_type)
+  inf_func <- GetInfluenceFcn(valid_dat, full_dat, mod_rake, sampling_type)
 
   dat_IF <- bind_cols(full_dat, inf_func)
 
@@ -39,13 +39,15 @@ FitRakingModel <- function(valid_dat, full_dat, mod, sampling_type) {
 
 
 
-GetInfluenceFcn <- function(valid_dat, full_dat, mod, sampling_type) {
+GetInfluenceFcn <- function(valid_dat, full_dat, mod_rake, sampling_type) {
 
-  if (mod == "RC") {
-    inf_func_mod <- FitRCModel(valid_dat, full_dat, sampling_type,
-                               return_coef = FALSE)  # fit RC model
-  } else if (mod == "naive") {
-    inf_func_mod <- FitCoxModel(full_dat$time_star, full_dat$delta_star, full_dat$x_star, full_dat$z,
+  if (mod_rake == "RC") {
+    inf_func_mod <- FitRCModel(valid_dat, full_dat,
+                               sampling_type,
+                               return_coef = FALSE)
+  } else if (mod_rake == "naive") {
+    inf_func_mod <- FitCoxModel(full_dat$time_star, full_dat$delta_star,
+                                full_dat$x_star, full_dat$z,
                                 return_coef = FALSE)
   } else {
     stop("Specify 'RC' or 'naive' for calibration")
@@ -66,7 +68,8 @@ CalibrateDesign <- function(IF_dat, sampling_type) {
 
     IF_design <- twophase(id = list(~id, ~id), subset = ~randomized,
                           strata = list(NULL, ~delta_star), data = IF_dat)
-    IF_raking <- calibrate(IF_design, phase = 2, formula = ~if1+if2+delta_star, calfun = "raking")
+    IF_raking <- calibrate(IF_design, phase = 2, formula = ~if1+if2+delta_star,
+                           calfun = "raking")
 
   } else if (sampling_type == "srs") {
 
