@@ -83,11 +83,10 @@ called `randomized` that is TRUE for those subjects selected in
 the validation subset and FALSE otherwise.
 
 ```R
-full_dat$time <- full_dat$delta <- full_dat$x <- NA
-
 full_dat$time[full_dat$randomized == TRUE] <- valid_subset$time
 full_dat$delta[full_dat$randomized == TRUE] <- valid_subset$delta
 full_dat$x[full_dat$randomized == TRUE] <- valid_subset$x
+full_dat$total_y_err[full_dat$randomized == TRUE] <- valid_subset$total_y_err
 ```
 
 Set the sampling scheme for the validation subset
