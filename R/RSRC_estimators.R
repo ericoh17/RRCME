@@ -25,6 +25,8 @@
 #'
 #' @importFrom dplyr mutate filter select arrange
 #'
+#' @importFrom magrittr %>%
+#'
 #' @rdname RSRC_estimators
 #' @export
 FitRSRCModel <- function(valid_dat, full_dat, sampling_type, beta_x_start, beta_z_start) {
@@ -164,7 +166,7 @@ RSRCscore <- function(betas, xhat_mat, xhat_subj, z_mat, z_subj,
 CalcExpw_RSRC <- function(valid_dat, full_dat, sampling_type) {
 
   valid_dat <- valid_dat %>%
-    dplyr::mutate(new_total_y_err = time_hatXY - time)
+    mutate(new_total_y_err = time_hatXY - time)
 
   if (sampling_type == "cc") {
     w_mod <- lm(new_total_y_err ~ x_star + z, data = valid_dat, weights = wts)

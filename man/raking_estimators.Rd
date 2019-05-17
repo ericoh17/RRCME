@@ -4,14 +4,14 @@
 \alias{FitRakingModel}
 \title{Calculates raking estimates}
 \usage{
-FitRakingModel(valid_dat, full_dat, mod, sampling_type)
+FitRakingModel(valid_dat, full_dat, mod_rake, sampling_type)
 }
 \arguments{
 \item{valid_dat}{Validation subset dataset}
 
 \item{full_dat}{Full dataset}
 
-\item{mod}{String indicating which model to get influence
+\item{mod_rake}{String indicating which model to get influence
 functions from}
 
 \item{sampling_type}{String indicating either simple random

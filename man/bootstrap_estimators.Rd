@@ -41,7 +41,7 @@ A vector of bootstrap beta_x and beta_z estimates
 \description{
 These unctions that implement the bootstrap for all considered methods
 Note: each bootstrap is stratified on inclusion into the
-validation subset
+validation subset (and on case status for case-cohort sampling)
 }
 \details{
 \code{RunRCBootstrap} implements the bootstrap for the RC methods

@@ -39,6 +39,8 @@
 #'
 #' @importFrom survey twophase svycoxph
 #'
+#' @importFrom magrittr %>%
+#'
 #' @rdname bootstrap_estimators
 #' @export
 RunRCBootstrap <- function(all_dat, inds,

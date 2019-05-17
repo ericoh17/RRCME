@@ -28,9 +28,11 @@
 #'
 #' @importFrom dplyr mutate
 #'
-#' @importFrom survival coxph
+#' @importFrom survival coxph Surv
 #'
 #' @importFrom survey twophase
+#'
+#' @importFrom magrittr %>%
 #'
 #' @rdname RC_estimators
 #' @export
