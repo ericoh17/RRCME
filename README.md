@@ -104,8 +104,6 @@ additional variable called `cc_strata` that
 defines the correct strata for the bootstrap.
 
 ```R
-full_dat$cc_strata <- NA
-
 full_dat$cc_strata[full_dat$randomized == FALSE] <- 1
 full_dat$cc_strata[full_dat$randomized == TRUE & full_dat$delta_star == 1] <- 2
 full_dat$cc_strata[full_dat$randomized == TRUE & full_dat$delta_star == 0] <- 3
