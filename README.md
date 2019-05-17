@@ -22,8 +22,12 @@ To install and load this package in R from GitHub, run the following commands:
 install.packages("devtools")
 library(devtools)
 devtools::install_github("ericoh17/RRCME")
+```
+
+## Load Package
+```R
 library(RRCME)
-```  
+```
 
 ## Getting Started
 
