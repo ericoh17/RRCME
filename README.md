@@ -16,7 +16,7 @@ validation subset, which can be selected using
 either a simple random sample or case-cohort sampling. 
 
 Here, we demonstrate how to use the method. For more information, 
-see our our [paper](https://arxiv.org/abs/1905.08330). 
+see our [paper](https://arxiv.org/abs/1905.08330). 
 
 ## Installation
 
@@ -107,7 +107,7 @@ with the above arguments.
 
 ```R
 res <- CalcCorrectedlogHR(full_dat, valid_subset,
-                          num_boot, sampling_scheme
+                          num_boot, sampling_scheme,
                           estimators)
 ```
 
