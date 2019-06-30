@@ -75,9 +75,13 @@ CalcCorrectedlogHR <- function(full_dat, valid_dat,
 
   if ("RC" %in% estimators) {
 
+    message("Running RC")
+
     RC_fit <- FitRCModel(valid_dat, full_dat,
                          sampling_type,
                          return_coef = TRUE)
+
+    message("Calculating standard errors for RC")
 
     if (sampling_type == "cc") {
 
@@ -112,10 +116,14 @@ CalcCorrectedlogHR <- function(full_dat, valid_dat,
 
   if ("RSRC" %in% estimators) {
 
+    message("Running RSRC")
+
     RSRC_fit <- FitRSRCModel(valid_dat, full_dat,
                              sampling_type,
                              RC_fit[[1]],
                              RC_fit[[2]])
+
+    message("Calculating standard errors for RSRC")
 
     if (sampling_type == "cc") {
 
@@ -155,9 +163,13 @@ CalcCorrectedlogHR <- function(full_dat, valid_dat,
 
   if ("GRRC" %in% estimators) {
 
+    message("Running GRRC")
+
     GRRC_fit <- FitRakingModel(valid_dat, full_dat,
                                mod_rake = "RC",
                                sampling_type)
+
+    message("Calculating standard errors for GRRC")
 
     if (sampling_type == "cc") {
 
@@ -195,9 +207,13 @@ CalcCorrectedlogHR <- function(full_dat, valid_dat,
 
   if ("GRN" %in% estimators) {
 
+    message("Running GRN")
+
     GRN_fit <- FitRakingModel(valid_dat, full_dat,
                               mod_rake = "naive",
                               sampling_type)
+
+    message("Calculating standard errors for GRN")
 
     if (sampling_type == "cc") {
 
@@ -233,6 +249,7 @@ CalcCorrectedlogHR <- function(full_dat, valid_dat,
     results_lst[["GRN"]] <- as.data.frame(GRN_mat)
   }
 
+  message("Done!")
   return(results_lst)
 
 }
