@@ -3,7 +3,8 @@
 
 This package implements four different estimators to correct 
 for bias in time-to-event data in the presence of correlated 
-covariate and censored event time measurement error. The four 
+covariate and censored event time measurement error. The
+assumed model is the Cox proportional hazard model. The four 
 estimators are 
 
 * Regression Calibration (`RC`), 
@@ -28,12 +29,12 @@ library(devtools)
 devtools::install_github("ericoh17/RRCME")
 ```
 
-## Load Package
+## Load package
 ```R
 library(RRCME)
 ```
 
-## Getting Started
+## Getting started
 
 In this example, we will read in a simulated dataset and
 corresponding validation subset. The validation subset was
